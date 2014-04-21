@@ -1,0 +1,47 @@
+﻿<Window x:Class="SnippetStore.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:SnippetStore"
+        Title="Snippet Store App" Height="650" Width="750">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+        <ToolBarPanel DockPanel.Dock="Top">
+            <ToolBar ToolBarTray.IsLocked="True" SizeChanged="ToolBar_SizeChanged">
+                <Button Content="Add"/>
+                <Button Content="Remove"/>
+            </ToolBar>
+        </ToolBarPanel>
+        
+        <StatusBar DockPanel.Dock="Bottom" Height="25" VerticalAlignment="Bottom">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <Separator Width="1"/>
+                    <TextBlock Text="Snippets: "/>
+                    <TextBlock Text="5"/>
+                </StackPanel>
+            </Grid>
+        </StatusBar>
+        
+        <TreeView DockPanel.Dock="Left" MinWidth="150" HorizontalAlignment="Left" HorizontalContentAlignment="Left">
+            <TreeViewItem Header="Level 1" />
+        </TreeView>
+        
+        <TabControl Background="CadetBlue">
+            <TabItem Header="1">
+                <Canvas Background="Orange"/>
+            </TabItem>
+            <TabItem Header="2">
+                <Canvas Background="Red"/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>

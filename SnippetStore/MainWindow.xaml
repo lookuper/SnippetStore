@@ -30,11 +30,22 @@
                 </StackPanel>
             </Grid>
         </StatusBar>
-        
-        <TreeView DockPanel.Dock="Left" MinWidth="200" HorizontalAlignment="Left" HorizontalContentAlignment="Left">
-            <TreeViewItem Header="Level 1" />
-        </TreeView>
-        
+
+        <ListView DockPanel.Dock="Left" MinWidth="200" HorizontalAlignment="Left" HorizontalContentAlignment="Left" ItemsSource="{Binding Snippets}">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_DoubleClick"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
         <TabControl Background="CadetBlue">
             <TabItem Header="1">
                 <Canvas Background="Orange"/>

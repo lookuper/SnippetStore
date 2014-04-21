@@ -59,5 +59,14 @@ namespace SnippetStore.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to snippets.
+        /// </summary>
+        internal static string SnippetFolderName {
+            get {
+                return ResourceManager.GetString("SnippetFolderName", resourceCulture);
+            }
+        }
     }
 }

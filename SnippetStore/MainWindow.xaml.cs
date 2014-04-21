@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SnippetStore.BusinessLogic;
 
 namespace SnippetStore
 {
@@ -42,6 +43,30 @@ namespace SnippetStore
                 var defaultMargin = new Thickness(0, 0, 11, 0);
                 mainPanelBorder.Margin = toolbar.HasOverflowItems ? defaultMargin : new Thickness(0);
             }
+        }
+
+        private void ListBoxItem_DoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
+        {
+            var mv = this.DataContext as MainViewModel;
+            mv.TreeItemDoubleClickCommand.Execute((sender as ListBoxItem).Content as Snippet);
+        }
+
+        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Control control = sender as Control;
+            //ICommand command = (ICommand)control.GetValue(CommandProperty);
+            //object commandParameter = control.GetValue(CommandParameterProperty);
+
+            //if (sender is TreeViewItem)
+            //{
+            //    if (!((TreeViewItem)sender).IsSelected)
+            //        return;
+            //}
+
+            //if (command.CanExecute(commandParameter))
+            //{
+            //    command.Execute(commandParameter);
+            //}
         }
     }
 }

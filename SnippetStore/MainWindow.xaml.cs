@@ -23,6 +23,7 @@ namespace SnippetStore
         public MainWindow()
         {
             InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
         }
 
         private void ToolBar_SizeChanged(object sender, SizeChangedEventArgs e)

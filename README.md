@@ -1,0 +1,4 @@
+SnippetStore
+============
+
+SnippetStore application repository

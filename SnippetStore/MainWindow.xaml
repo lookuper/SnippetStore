@@ -1,7 +1,9 @@
 ﻿<Window x:Class="SnippetStore.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cbox="clr-namespace:AurelienRibon.Ui.SyntaxHighlightBox;assembly=AurelienRibon.Ui.SyntaxHighlightBox"
         xmlns:local="clr-namespace:SnippetStore"
+        Name="window"
         Title="Snippet Store App" Height="650" Width="900">
     <Window.DataContext>
         <local:MainViewModel/>
@@ -26,7 +28,7 @@
                 <StackPanel Orientation="Horizontal" Grid.Column="0">
                     <Separator Width="1"/>
                     <TextBlock Text="Snippets: "/>
-                    <TextBlock Text="5"/>
+                    <TextBlock Text="{Binding Snippets.Count}"/>
                 </StackPanel>
             </Grid>
         </StatusBar>
@@ -46,13 +48,41 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <TabControl Background="CadetBlue">
-            <TabItem Header="1">
-                <Canvas Background="Orange"/>
-            </TabItem>
-            <TabItem Header="2">
-                <Canvas Background="Red"/>
-            </TabItem>
+        <TabControl Background="CadetBlue" Name="tabs" 
+                    ItemsSource="{Binding Tabs}"
+                    SelectedItem="{Binding SelectedTab}" SelectionChanged="tabs_SelectionChanged">
+            <!--Header-->
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Header}" Margin="0,0,20,0"/>
+                        <Button Content="X"
+                                Command="{Binding RelativeSource=
+                           {RelativeSource FindAncestor,
+                           AncestorType={x:Type TabControl}},
+                           Path= DataContext.CloseTabCommand}"
+                                Width="10" Height="10" FontWeight="UltraBold" Background="#FF6699 " FontSize="5"
+                                Foreground="White"
+                                Visibility="{Binding CloseButtonVisibility}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            
+            <!--Content-->
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <!--<ContentPresenter Content="{Binding ElementName=window, Path=DataContext.HighlightBox}">
+                    </ContentPresenter>-->
+                    <cbox:SyntaxHighlightBox IsLineNumbersMarginVisible="True" IsReadOnly="False"
+                                             Text="{Binding Content, Mode=TwoWay}"                                             
+                                             local:SyntaxUtil.BindableSource="{Binding ElementName=window, Path=DataContext.Highlighter}" />
+
+                        <!--local:SyntaxUtil.CodeSyntax="{Binding ElementName=window, Path=HighlightBox.CurrentHighlighter}"                                             />-->
+
+                    
+                    
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
     </DockPanel>
 </Window>

@@ -21,10 +21,15 @@ namespace SnippetStore
     /// </summary>
     public partial class MainWindow : Window
     {
+        public MainViewModel ViewModel
+        {
+            get { return this.DataContext as MainViewModel; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;            
         }
 
         private void ToolBar_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -47,26 +52,12 @@ namespace SnippetStore
 
         private void ListBoxItem_DoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
         {
-            var mv = this.DataContext as MainViewModel;
-            mv.TreeItemDoubleClickCommand.Execute((sender as ListBoxItem).Content as Snippet);
+            ViewModel.TreeItemDoubleClickCommand.Execute((sender as ListBoxItem).Content as Snippet);            
         }
 
-        private void TreeViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            Control control = sender as Control;
-            //ICommand command = (ICommand)control.GetValue(CommandProperty);
-            //object commandParameter = control.GetValue(CommandParameterProperty);
-
-            //if (sender is TreeViewItem)
-            //{
-            //    if (!((TreeViewItem)sender).IsSelected)
-            //        return;
-            //}
-
-            //if (command.CanExecute(commandParameter))
-            //{
-            //    command.Execute(commandParameter);
-            //}
+        private void tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {            
+            ViewModel.SelectedChangedCommand.Execute(null);
         }
     }
 }

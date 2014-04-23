@@ -8,6 +8,72 @@
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
+    <Window.Resources>
+        <SolidColorBrush x:Key="TabItem_BorderBrush_Selected" Color="Black"/>
+        <SolidColorBrush x:Key="B" Color="Aqua"/>
+        <Thickness x:Key="TabItemPanel_Padding" Left="4" Right="50"/>
+                
+        <Style TargetType="{x:Type TabControl}">
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Padding="{StaticResource TabItemPanel_Padding}" Background="AliceBlue">
+                                <TabPanel IsItemsHost="True"/>
+                            </Border>
+                            
+                            <Border BorderThickness="1,0,1,1"
+                                    Grid.Row="1"
+                                    BorderBrush="{StaticResource TabItem_BorderBrush_Selected}"
+                                    Background="{StaticResource B}">
+                                <Border BorderThickness="1"
+                                        BorderBrush="Black"
+                                        CornerRadius="3"
+                                        Margin="8">
+                                    <Border BorderThickness="1"
+                                            BorderBrush="{StaticResource TabItem_BorderBrush_Selected}"
+                                            CornerRadius="2"
+                                            Margin="0"
+                                            Padding="2,2,3,3">
+                                        <ContentPresenter ContentSource="SelectedContent" Margin="0"/>
+                                    </Border>
+                                </Border>                                
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid Height="35" VerticalAlignment="Bottom">
+                            <Border Name="Border"
+                                    Background="AliceBlue"
+                                    BorderBrush="{StaticResource TabItem_BorderBrush_Selected}"
+                                    Margin="1"
+                                    BorderThickness="2,1,1,0"
+                                    CornerRadius="3,3,0,0">
+                                <ContentPresenter x:Name="ContentSite"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"
+                                                  ContentSource="Header"
+                                                  Margin="7,2,12,2"
+                                                  RecognizesAccessKey="True"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <DockPanel>
         <ToolBarPanel DockPanel.Dock="Top">
             <ToolBar ToolBarTray.IsLocked="True" SizeChanged="ToolBar_SizeChanged">
@@ -74,7 +140,7 @@
                     <!--<ContentPresenter Content="{Binding ElementName=window, Path=DataContext.HighlightBox}">
                     </ContentPresenter>-->
                     <cbox:SyntaxHighlightBox IsLineNumbersMarginVisible="True" IsReadOnly="False"
-                                             Text="{Binding Content, Mode=TwoWay}"                                             
+                                             Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"                                             
                                              local:SyntaxUtil.BindableSource="{Binding ElementName=window, Path=DataContext.Highlighter}" />
 
                         <!--local:SyntaxUtil.CodeSyntax="{Binding ElementName=window, Path=HighlightBox.CurrentHighlighter}"                                             />-->

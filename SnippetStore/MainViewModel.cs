@@ -74,9 +74,14 @@ namespace SnippetStore
                 Content = snippet.Content,
                 CloseButtonVasability = Visibility.Visible.ToString(),
             };
-            
-            Tabs.Add(tab);
-            SelectedTab = tab;
+
+            if (Tabs.Where(t => t.Header.Equals(tab.Header)).Count() > 0)
+                SelectedTab = tab;
+            else
+            {
+                Tabs.Add(tab);
+                SelectedTab = tab;
+            }
         }
     }
 }

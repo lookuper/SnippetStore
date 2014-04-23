@@ -8,7 +8,14 @@ namespace SnippetStore
     public class MyTabItem : BaseViewModel
     {
         public String Header { get; set; }
-        public String Content { get; set; }
+
+        private String content;
+        public String Content 
+        {
+            get { return content; }
+            set { content = value; 
+                OnPropertyChanged("Content"); }
+        }
 
         private String closeButtonVisability;
         public String CloseButtonVasability

@@ -31,5 +31,26 @@ namespace SnippetStore.DataAccess
 
             return list;
         }
+
+        public void Save(Snippet snippet)
+        {
+            var pathWithName = Path.Combine(PathToSnippets, snippet.Name);
+
+            using (File.Create(pathWithName))
+            {
+                snippet.PathToFile = pathWithName;
+            }
+        }
+
+        public void Update(Snippet snippet)
+        {
+            var pathWithName = Path.Combine(PathToSnippets, snippet.Name);
+            File.WriteAllText(pathWithName, snippet.Content);
+        }
+
+        public void Remove(Snippet snippet)
+        {
+            File.Delete(snippet.PathToFile);
+        }
     }
 }

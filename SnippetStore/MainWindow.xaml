@@ -325,8 +325,8 @@
     <DockPanel>
         <ToolBarPanel DockPanel.Dock="Top" Background="White">
             <ToolBar ToolBarTray.IsLocked="True" SizeChanged="ToolBar_SizeChanged">
-                <Button Content="Add"/>
-                <Button Content="Remove"/>
+                <Button Content="Add" Command="{Binding AddSnippetCommand}"/>
+                <Button Content="Remove" Command="{Binding RemoveSnippetCommand}" CommandParameter="{Binding ElementName=AllSnippets, Path=SelectedItem}"/>
             </ToolBar>
         </ToolBarPanel>
         
@@ -347,7 +347,7 @@
             </Grid>
         </StatusBar>
 
-        <ListView DockPanel.Dock="Left" MinWidth="200" HorizontalAlignment="Left" HorizontalContentAlignment="Left" ItemsSource="{Binding Snippets}">
+        <ListView Name="AllSnippets" DockPanel.Dock="Left" MinWidth="200" HorizontalAlignment="Left" HorizontalContentAlignment="Left" ItemsSource="{Binding Snippets}">
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">

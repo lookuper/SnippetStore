@@ -33,7 +33,8 @@ namespace SnippetStore
         public ICommand TreeItemDoubleClickCommand { get; set; }
         public ICommand CloseTabCommand { get; set; }
         public ICommand SelectedChangedCommand { get; set; }
-
+        public ICommand AddSnippetCommand { get; set; }
+        public ICommand RemoveSnippetCommand { get; set; }
 
         public MainViewModel()
         {
@@ -43,8 +44,59 @@ namespace SnippetStore
             TreeItemDoubleClickCommand = new RelayCommand<Snippet>(HandleTreeItemDoubleClick);
             CloseTabCommand = new RelayCommand<MyTabItem>(CloseTabCommandHandler);
             SelectedChangedCommand = new RelayCommand<Object>(SelectedChangedCommandHandler);
+            AddSnippetCommand = new RelayCommand<Object>(AddSnippetCommandHandler);
+            RemoveSnippetCommand = new RelayCommand<Snippet>(RemoveSnippetCommandHandler);
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
+        }
+
+        private void RemoveSnippetCommandHandler(Snippet snippet)
+        {
+            if (snippet == null)
+                return;
+
+            model.Remove(snippet);
+            Snippets.Remove(snippet);
+            CloseTabCommandHandler(GetTabBySnippet(snippet));
+        }
+
+        private void AddSnippetCommandHandler(object obj)
+        {
+            var addForm = new AddWindow()
+            {
+                Owner = Application.Current.MainWindow,
+                ShowInTaskbar = false,
+            };
+
+            if (addForm.ShowDialog().Value)
+            {
+                var fileName = addForm.DataContext as String;
+
+                if (String.IsNullOrEmpty(fileName))
+                {
+                    MessageBox.Show("File name not provided", "Invalid Input", MessageBoxButton.OK);
+                    return;
+                }
+
+                var newSnippet = new Snippet(fileName, null);
+                model.Save(newSnippet);
+
+                Snippets.Add(newSnippet);
+                HandleTreeItemDoubleClick(newSnippet);
+                // addForm.DataContext
+            }
+            //var newSnippet = new Snippet("New Snippet *", String.Empty);
+
+            //var newItem = new MyTabItem()
+            //{
+            //    Header = "New Snippet *",
+            //    Content = String.Empty,
+            //};
+
+            //Snippets.Add(newSnippet);
+            
+            //Tabs.Add(newItem);
+            //SelectedTab = newItem;
         }
 
         private void SelectedChangedCommandHandler(object obj)
@@ -91,6 +143,24 @@ namespace SnippetStore
                 Tabs.Add(tab);
                 SelectedTab = tab;
             }
+        }
+
+        private Snippet GetSnippetByTab(MyTabItem tab)
+        {
+            var snippet = (from sn in Snippets
+                           where sn.Name.Equals(tab.Header)
+                           select sn).FirstOrDefault();
+
+            return snippet;
+        }
+
+        private MyTabItem GetTabBySnippet(Snippet snippet)
+        {
+            var selectedTab = (from tab in Tabs
+                               where tab.Header.Equals(SelectedTab.Header)
+                               select tab).FirstOrDefault();
+
+            return selectedTab;
         }
     }
 }

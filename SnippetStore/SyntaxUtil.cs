@@ -9,28 +9,6 @@ using AurelienRibon.Ui.SyntaxHighlightBox;
 
 namespace SnippetStore
 {
-    //public class SyntaxUtil 
-    //{
-    //    // Using a DependencyProperty as the backing store for MyProperty.  This enables animation, styling, binding, etc...
-    //    public static readonly DependencyProperty CodeSyntaxProperty =
-    //        DependencyProperty.Register("CodeSyntax", typeof(AurelienRibon.Ui.SyntaxHighlightBox.IHighlighter), typeof(SyntaxUtil),
-    //        new UIPropertyMetadata(null, CodeSyntaxPropertyChanged));
-
-    //    public static IHighlighter GetCodeSyntax(DependencyObject obj)
-    //    {
-    //        return obj.GetValue(CodeSyntaxProperty) as IHighlighter;
-    //    }
-
-    //    public static void SetCodeSyntax(DependencyObject obj, IHighlighter value)
-    //    {
-    //        obj.SetValue(CodeSyntaxProperty, value);
-    //    }
-
-    //    private static void CodeSyntaxPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    //    {
-    //        throw new NotImplementedException();
-    //    }        
-    //}
     public class SyntaxUtil
     {
         public static readonly DependencyProperty BindableSourceProperty =

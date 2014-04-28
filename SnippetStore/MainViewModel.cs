@@ -56,8 +56,11 @@ namespace SnippetStore
 
             if (SelectedTab != null)
             {
-                Tabs.Where(tab => tab.Header.Equals(SelectedTab.Header)).First()
-                    .CloseButtonVasability = Visibility.Visible.ToString();
+                var selectedTab = (from tab in Tabs
+                                   where tab.Header.Equals(SelectedTab.Header)
+                                   select tab).First();
+
+                selectedTab.CloseButtonVasability = Visibility.Visible.ToString();
             }
         }
 
@@ -75,8 +78,14 @@ namespace SnippetStore
                 CloseButtonVasability = Visibility.Visible.ToString(),
             };
 
-            if (Tabs.Where(t => t.Header.Equals(tab.Header)).Count() > 0)
-                SelectedTab = tab;
+            var existedTab = (from duplicateTab in Tabs
+                              where duplicateTab.Header.Equals(snippet.Name)
+                              select duplicateTab).FirstOrDefault();
+
+            if (existedTab != null)
+            {
+                SelectedTab = existedTab;
+            }
             else
             {
                 Tabs.Add(tab);

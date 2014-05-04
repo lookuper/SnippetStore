@@ -59,5 +59,10 @@ namespace SnippetStore
         {            
             ViewModel.SelectedChangedCommand.Execute(null);
         }
+
+        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ViewModel.CloseAppCommand.Execute(e);
+        }
     }
 }

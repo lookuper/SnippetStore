@@ -25,7 +25,6 @@ namespace SnippetStore.BusinessLogic
             {
                 repository.Update(snippet);
             }
-
         }
 
         internal void Remove(Snippet snippet)

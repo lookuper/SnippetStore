@@ -5,6 +5,7 @@
         xmlns:local="clr-namespace:SnippetStore"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Name="window"
+        Closing="window_Closing"
         Title="Snippet Store App" Height="650" Width="900">
     <Window.DataContext>
         <local:MainViewModel/>
@@ -321,12 +322,30 @@
             </Setter>
         </Style>
     </Window.Resources>
+    
+    <Window.InputBindings>
+        <KeyBinding Modifiers="Control"
+                    Key="S"
+                    Command="{Binding SaveCurrentTabCommand}"
+                    CommandParameter="{Binding ElementName=tabs, Path=SelectedItem}" />
+        <KeyBinding Modifiers="Control"
+                    Key="N"
+                    Command="{Binding AddSnippetCommand}" />
+        <KeyBinding Modifiers="Control"
+                    Key="W"
+                    Command="{Binding CloseTabCommand}"/>
+    </Window.InputBindings>
 
-    <DockPanel>
+    <DockPanel Background="#FFEFEFF2">
         <ToolBarPanel DockPanel.Dock="Top" Background="White">
             <ToolBar ToolBarTray.IsLocked="True" SizeChanged="ToolBar_SizeChanged">
-                <Button Content="Add" Command="{Binding AddSnippetCommand}"/>
-                <Button Content="Remove" Command="{Binding RemoveSnippetCommand}" CommandParameter="{Binding ElementName=AllSnippets, Path=SelectedItem}"/>
+                <Button Command="{Binding AddSnippetCommand}">
+                    <Image Source="Icons/Plus.ico" Width="25" Height="25"/>
+                </Button>
+                <Button>
+                    <Image Source="Icons/Info.ico" Width="25" Height="25"/>
+                </Button>
+                <!--<Button Content="Remove" Command="{Binding RemoveSnippetCommand}" CommandParameter="{Binding ElementName=AllSnippets, Path=SelectedItem}"/>-->
             </ToolBar>
         </ToolBarPanel>
         
@@ -347,8 +366,7 @@
             </Grid>
         </StatusBar>
 
-        <ListView Name="AllSnippets" DockPanel.Dock="Left" MinWidth="200" HorizontalAlignment="Left" HorizontalContentAlignment="Left" ItemsSource="{Binding Snippets}">
-
+        <ListView Name="AllSnippets" DockPanel.Dock="Left" MinWidth="200" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" ItemsSource="{Binding Snippets}">                        
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
                     <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_DoubleClick"/>
@@ -357,7 +375,30 @@
             
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}" />
+                    <Border BorderBrush="Gray" BorderThickness="1,0,1,0" Margin="-6, 0, -6, 0">
+                        <Grid Margin="6,0,6,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{Binding Name}"
+                                       FontWeight="SemiBold"
+                                       FontSize="13"
+                                       Grid.Column="0"
+                                       TextTrimming="CharacterEllipsis"
+                                       VerticalAlignment="Center"/>
+                            <Button VerticalAlignment="Center"
+                                   Grid.Column="1"
+                                   Width="12" Height="12" FontWeight="UltraBold" Background="#FF6699 " FontSize="5"
+                                   Foreground="White" Content="X"
+                                    
+                                   Command="{Binding RelativeSource=
+                                           {RelativeSource FindAncestor,
+                                           AncestorType={x:Type ListView}},
+                                           Path= DataContext.RemoveSnippetCommand}"
+                                   CommandParameter="{Binding}"/>
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
@@ -369,7 +410,7 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Header}" Margin="0,0,20,0"/>
+                        <TextBlock Text="{Binding VisibleHeader}" Margin="0,0,20,0"/>
                         <Button Content="X"
                                 Command="{Binding RelativeSource=
                            {RelativeSource FindAncestor,
@@ -387,14 +428,9 @@
                 <DataTemplate>
                     <!--<ContentPresenter Content="{Binding ElementName=window, Path=DataContext.HighlightBox}">
                     </ContentPresenter>-->
-                    <cbox:SyntaxHighlightBox IsLineNumbersMarginVisible="True" IsReadOnly="False"
+                    <cbox:SyntaxHighlightBox IsLineNumbersMarginVisible="True" IsReadOnly="False" Name="syntaxBox" Focusable="True"
                                              Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"                                             
                                              local:SyntaxUtil.BindableSource="{Binding ElementName=window, Path=DataContext.Highlighter}" />
-
-                        <!--local:SyntaxUtil.CodeSyntax="{Binding ElementName=window, Path=HighlightBox.CurrentHighlighter}"                                             />-->
-
-                    
-                    
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

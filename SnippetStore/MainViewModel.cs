@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -35,6 +36,8 @@ namespace SnippetStore
         public ICommand SelectedChangedCommand { get; set; }
         public ICommand AddSnippetCommand { get; set; }
         public ICommand RemoveSnippetCommand { get; set; }
+        public ICommand SaveCurrentTabCommand { get; set; }
+        public ICommand CloseAppCommand { get; set; }
 
         public MainViewModel()
         {
@@ -46,8 +49,49 @@ namespace SnippetStore
             SelectedChangedCommand = new RelayCommand<Object>(SelectedChangedCommandHandler);
             AddSnippetCommand = new RelayCommand<Object>(AddSnippetCommandHandler);
             RemoveSnippetCommand = new RelayCommand<Snippet>(RemoveSnippetCommandHandler);
+            SaveCurrentTabCommand = new RelayCommand<MyTabItem>(SaveCurrentTabCommandHandler);
+            CloseAppCommand = new RelayCommand<CancelEventArgs>(CloseAppCommandHandler);
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
+        }
+
+        private void CloseAppCommandHandler(CancelEventArgs eArgs)
+        {
+            var editedTabs = from tab in Tabs
+                             where tab.IsDataChanged
+                             select tab;
+
+            if (editedTabs.Count() == 0)
+                return;
+
+            foreach (var tab in editedTabs)
+            {
+                SelectedTab = tab;
+                var result = MessageBox.Show(String.Format("Do you want to save changes to {0}", tab.Header), 
+                                            "SnippetStore",
+                                            MessageBoxButton.YesNoCancel);
+
+                switch (result)
+                {
+                    case MessageBoxResult.Cancel:
+                        eArgs.Cancel = true;
+                        return;
+                    case MessageBoxResult.No:
+                        continue;
+                    case MessageBoxResult.Yes:
+                        SaveCurrentTabCommand.Execute(SelectedTab);
+                        break;
+                }
+            }
+        }
+
+        private void SaveCurrentTabCommandHandler(MyTabItem tab)
+        {
+            if (tab == null)
+                return;
+
+            model.Save(GetSnippetByTab(SelectedTab));
+            tab.SuccessfulSave();
         }
 
         private void RemoveSnippetCommandHandler(Snippet snippet)
@@ -83,20 +127,7 @@ namespace SnippetStore
 
                 Snippets.Add(newSnippet);
                 HandleTreeItemDoubleClick(newSnippet);
-                // addForm.DataContext
             }
-            //var newSnippet = new Snippet("New Snippet *", String.Empty);
-
-            //var newItem = new MyTabItem()
-            //{
-            //    Header = "New Snippet *",
-            //    Content = String.Empty,
-            //};
-
-            //Snippets.Add(newSnippet);
-            
-            //Tabs.Add(newItem);
-            //SelectedTab = newItem;
         }
 
         private void SelectedChangedCommandHandler(object obj)
@@ -118,6 +149,22 @@ namespace SnippetStore
 
         private void CloseTabCommandHandler(MyTabItem item)
         {
+            if (SelectedTab == null)
+                return;
+
+            if (SelectedTab.IsDataChanged)
+            {
+                var result = MessageBox.Show("Do you want to save?", "Data is changed", MessageBoxButton.YesNo);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    var sn = GetSnippetByTab(SelectedTab);                    
+                    model.Save(sn);
+
+                    SelectedTab.SuccessfulSave();
+                }
+            }
+
             Tabs.Remove(SelectedTab);
         }
 
@@ -126,6 +173,7 @@ namespace SnippetStore
             var tab = new MyTabItem()
             {
                 Header = snippet.Name,
+                VisibleHeader = snippet.Name,
                 Content = snippet.Content,
                 CloseButtonVasability = Visibility.Visible.ToString(),
             };
@@ -151,6 +199,7 @@ namespace SnippetStore
                            where sn.Name.Equals(tab.Header)
                            select sn).FirstOrDefault();
 
+            snippet.Content = tab.Content;
             return snippet;
         }
 

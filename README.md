@@ -13,4 +13,4 @@ Features:
   Tab control navigation.
 
 Screenshot:
-![Alt text](/screenshots/SnippetStore.png "Main page")
+![Alt text](/SnippetStore/screenshots/SnippetStore.png "Main page")

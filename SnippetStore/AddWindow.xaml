@@ -11,7 +11,7 @@
             <TextBox Name="Box" Width="222" Margin="5" Text="{Binding DataContext}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-            <Button Content="Save"  Height="22" Width="55" Margin="5,5,5,5" Click="Button_Save_Click" IsDefault="True"/>
+            <Button Content="Create"  Height="22" Width="55" Margin="5,5,5,5" Click="Button_Save_Click" IsDefault="True"/>
             <Button Content="Cancel" Height="22" Width="55" Margin="5,5,5,5" Click="Button_Click" IsCancel="True"/>
         </StackPanel>
     </StackPanel>

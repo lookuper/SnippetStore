@@ -6,7 +6,12 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Name="window"
         Closing="window_Closing"
-        Title="Snippet Store App" Height="650" Width="900">
+        
+        Height="{local:SettingBinding Height}"
+        Width="{local:SettingBinding Width}"
+        Left="{local:SettingBinding Left}"
+        Top="{local:SettingBinding Top}"        
+        Title="SnippetStore">
     <Window.DataContext>
         <local:MainViewModel/>
     </Window.DataContext>
@@ -343,9 +348,8 @@
                     <Image Source="Icons/Plus.ico" Width="25" Height="25"/>
                 </Button>
                 <Button>
-                    <Image Source="Icons/Info.ico" Width="25" Height="25"/>
+                    <Image Source="Icons/Info.ico" ToolTip="May, 2014." Width="25" Height="25"/>
                 </Button>
-                <!--<Button Content="Remove" Command="{Binding RemoveSnippetCommand}" CommandParameter="{Binding ElementName=AllSnippets, Path=SelectedItem}"/>-->
             </ToolBar>
         </ToolBarPanel>
         
@@ -426,8 +430,6 @@
             <!--Content-->
             <TabControl.ContentTemplate>
                 <DataTemplate>
-                    <!--<ContentPresenter Content="{Binding ElementName=window, Path=DataContext.HighlightBox}">
-                    </ContentPresenter>-->
                     <cbox:SyntaxHighlightBox IsLineNumbersMarginVisible="True" IsReadOnly="False" Name="syntaxBox" Focusable="True"
                                              Text="{Binding Content, UpdateSourceTrigger=PropertyChanged}"                                             
                                              local:SyntaxUtil.BindableSource="{Binding ElementName=window, Path=DataContext.Highlighter}" />

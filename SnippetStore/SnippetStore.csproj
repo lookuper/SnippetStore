@@ -37,6 +37,9 @@
   <PropertyGroup>
     <ApplicationIcon>SnippetStore.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>SnippetStore.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AurelienRibon.Ui.SyntaxHighlightBox">
       <HintPath>..\packages\AurelienRibon.Ui.SyntaxHighlightBox.2.0.2\lib\NET40\AurelienRibon.Ui.SyntaxHighlightBox.dll</HintPath>
@@ -66,6 +69,7 @@
     <Compile Include="MouseDoubleClick.cs" />
     <Compile Include="MyTabItem.cs" />
     <Compile Include="RelayCommand.cs" />
+    <Compile Include="SettingBindingExtension.cs" />
     <Compile Include="SyntaxUtil.cs" />
     <Page Include="AddWindow.xaml">
       <SubType>Designer</SubType>

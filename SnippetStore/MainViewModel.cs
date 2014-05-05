@@ -99,6 +99,11 @@ namespace SnippetStore
             if (snippet == null)
                 return;
 
+            var mbResult = MessageBox.Show("Remove this item?", "SnippetStore", MessageBoxButton.OKCancel);
+            
+            if (mbResult == MessageBoxResult.Cancel)
+                return;
+
             model.Remove(snippet);
             Snippets.Remove(snippet);
             CloseTabCommandHandler(GetTabBySnippet(snippet));

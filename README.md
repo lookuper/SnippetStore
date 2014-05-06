@@ -8,9 +8,10 @@ Requirenments:
   MS .NET Framework 4.0+
   
 Features: 
-  C# code syntax highlighting.
+  C# code syntax highlighting *.
   Auto save window position.
   Tab control navigation.
+* - using WPF SyntaxHighlightBox control from http://syntaxhighlightbox.codeplex.com/
 
 Keyboard shortcuts: Ctrl+N (new snippet), Ctrl+S (save current tab), Ctrl+W (close current tab)
 

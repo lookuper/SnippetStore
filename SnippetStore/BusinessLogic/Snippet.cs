@@ -8,7 +8,7 @@ namespace SnippetStore.BusinessLogic
 {
     public class Snippet
     {
-        public String Name { get; private set; }
+        public String Name { get; set; }
         public String PathToFile { get; set; }
 
         private String content;
@@ -16,6 +16,11 @@ namespace SnippetStore.BusinessLogic
         {
             get { return content ?? (content = GetContent()); }
             set { content = value; }
+        }
+
+        public Snippet()
+        {
+
         }
 
         public Snippet(string name, string path)

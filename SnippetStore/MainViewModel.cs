@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using AurelienRibon.Ui.SyntaxHighlightBox;
 using SnippetStore.BusinessLogic;
+using GoogleFile = Google.Apis.Drive.v2.Data.File;
 
 namespace SnippetStore
 {
@@ -38,6 +39,7 @@ namespace SnippetStore
         public ICommand RemoveSnippetCommand { get; set; }
         public ICommand SaveCurrentTabCommand { get; set; }
         public ICommand CloseAppCommand { get; set; }
+        public ICommand SyncSnippetsCommand { get; set; }
 
         public MainViewModel()
         {
@@ -51,8 +53,46 @@ namespace SnippetStore
             RemoveSnippetCommand = new RelayCommand<Snippet>(RemoveSnippetCommandHandler);
             SaveCurrentTabCommand = new RelayCommand<MyTabItem>(SaveCurrentTabCommandHandler);
             CloseAppCommand = new RelayCommand<CancelEventArgs>(CloseAppCommandHandler);
+            SyncSnippetsCommand = new RelayCommand<Object>(SyncSnippetsCommandHandler);
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
+        }
+
+        private void SyncSnippetsCommandHandler(object obj)
+        {
+            var drive = new GoogleDriveStorage();
+            drive.CreateInfustructure();
+
+            var allSnippets = Snippets.ToList();
+            var driveFiles = drive.GetLookuperFiles();
+
+            var snippetsToUpload = new List<Snippet>();
+            foreach (var snippet in allSnippets)
+            {
+                var existingSnippet = driveFiles.FirstOrDefault(file => file.Title.Equals(snippet.Name, StringComparison.OrdinalIgnoreCase));
+
+                if (existingSnippet == null)
+                    snippetsToUpload.Add(snippet);
+            }
+
+            var driveFileToDownload = new List<GoogleFile>();
+            foreach (var driveFile in driveFiles)
+            {
+                var existingDriveFile = allSnippets.FirstOrDefault(snippet => snippet.Name.Equals(driveFile.Title, StringComparison.OrdinalIgnoreCase));
+
+                if (existingDriveFile == null)
+                    driveFileToDownload.Add(driveFile);
+            }
+            string debug;
+
+            drive.UploadFiles(snippetsToUpload);
+            var snippetsToStore = drive.DownloadFiles(driveFileToDownload);
+
+            foreach (var snippet in snippetsToStore)
+            {
+                model.Save(snippet);
+                Snippets.Add(snippet);
+            }
         }
 
         private void CloseAppCommandHandler(CancelEventArgs eArgs)
@@ -106,6 +146,11 @@ namespace SnippetStore
 
             model.Remove(snippet);
             Snippets.Remove(snippet);
+
+            // remove from google drive 
+            var drive = new GoogleDriveStorage();
+            drive.RemoveSnippet(snippet);
+
             CloseTabCommandHandler(GetTabBySnippet(snippet));
         }
 

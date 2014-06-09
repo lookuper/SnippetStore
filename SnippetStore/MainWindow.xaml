@@ -350,6 +350,9 @@
                 <Button>
                     <Image Source="Icons/Info.ico" ToolTip="May, 2014." Width="25" Height="25"/>
                 </Button>
+                <Button Command="{Binding SyncSnippetsCommand}">
+                    <Image Source="Icons/Sync.ico" Width="25" Height="25" ToolTip="Google Drive Sync files"/>
+                </Button>
             </ToolBar>
         </ToolBarPanel>
         

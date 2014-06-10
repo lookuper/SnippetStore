@@ -130,7 +130,12 @@ namespace SnippetStore
             if (tab == null)
                 return;
 
-            model.Save(GetSnippetByTab(SelectedTab));
+            var snippetToUpdate = GetSnippetByTab(SelectedTab);
+            model.Save(snippetToUpdate);
+
+            var drive = new GoogleDriveStorage();
+            drive.Update(snippetToUpdate);
+
             tab.SuccessfulSave();
         }
 

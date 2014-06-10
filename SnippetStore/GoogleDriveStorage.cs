@@ -142,6 +142,18 @@ namespace SnippetStore
             var responce = Service.Files.Insert(fileToCreate, contentStream, FileMimeType).Upload();
         }
 
+        public void Update(Snippet snippet)
+        {
+            var allFiles = GetAllNotTrashedFiles();
+            var fileToUpdate = allFiles.FirstOrDefault(file => file.Title.Equals(snippet.Name, StringComparison.OrdinalIgnoreCase));
+
+            var contentStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(snippet.Content));
+            var update = Service.Files.Update(fileToUpdate, fileToUpdate.Id, contentStream, FileMimeType);
+            update.NewRevision = true;
+
+            update.UploadAsync();
+        }
+
         public void RemoveSnippet(Snippet snippet)
         {
             var allFiles = GetAllNotTrashedFiles();

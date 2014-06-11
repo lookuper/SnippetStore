@@ -17,6 +17,11 @@ namespace SnippetStore
         private readonly SnippetStoreModel model = new SnippetStoreModel();
         private MyTabItem selectedTab;
         private IHighlighter highlighter;
+        private GoogleDriveStorage googleDrive = new GoogleDriveStorage
+            (
+                "929945743179-l1ut4m2r3untdolncrgu6tf6vlsccjcl.apps.googleusercontent.com",
+                "W7iNoZwX1Wl4WS4HBP5B3akU"
+            );
         
         public ObservableCollection<Snippet> Snippets { get; private set; }
         public ObservableCollection<MyTabItem> Tabs { get; private set; }
@@ -60,11 +65,10 @@ namespace SnippetStore
 
         private void SyncSnippetsCommandHandler(object obj)
         {
-            var drive = new GoogleDriveStorage();
-            drive.CreateInfustructure();
+            googleDrive.CreateInfustructure();
 
             var allSnippets = Snippets.ToList();
-            var driveFiles = drive.GetLookuperFiles();
+            var driveFiles = googleDrive.GetLookuperFiles();
 
             var snippetsToUpload = new List<Snippet>();
             foreach (var snippet in allSnippets)
@@ -85,8 +89,8 @@ namespace SnippetStore
             }
             string debug;
 
-            drive.UploadFiles(snippetsToUpload);
-            var snippetsToStore = drive.DownloadFiles(driveFileToDownload);
+            googleDrive.UploadFiles(snippetsToUpload);
+            var snippetsToStore = googleDrive.DownloadFiles(driveFileToDownload);
 
             foreach (var snippet in snippetsToStore)
             {
@@ -133,8 +137,7 @@ namespace SnippetStore
             var snippetToUpdate = GetSnippetByTab(SelectedTab);
             model.Save(snippetToUpdate);
 
-            var drive = new GoogleDriveStorage();
-            drive.Update(snippetToUpdate);
+            googleDrive.Update(snippetToUpdate);
 
             tab.SuccessfulSave();
         }
@@ -153,8 +156,7 @@ namespace SnippetStore
             Snippets.Remove(snippet);
 
             // remove from google drive 
-            var drive = new GoogleDriveStorage();
-            drive.RemoveSnippet(snippet);
+            googleDrive.RemoveSnippet(snippet);
 
             CloseTabCommandHandler(GetTabBySnippet(snippet));
         }

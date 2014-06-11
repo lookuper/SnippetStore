@@ -63,16 +63,10 @@ namespace SnippetStore
             }
         }
 
-        public GoogleDriveStorage()
-        {
-            ClientId = "929945743179-l1ut4m2r3untdolncrgu6tf6vlsccjcl.apps.googleusercontent.com";
-            ClientSecret = "W7iNoZwX1Wl4WS4HBP5B3akU";
-        }
-
         public GoogleDriveStorage(string clientId, string clientSecret)
         {
             ClientId = clientId;
-            ClientSecret = ClientSecret;
+            ClientSecret = clientSecret;
         }
 
         public IList<GoogleFile> GetAllNotTrashedFiles()
@@ -147,6 +141,12 @@ namespace SnippetStore
             var allFiles = GetAllNotTrashedFiles();
             var fileToUpdate = allFiles.FirstOrDefault(file => file.Title.Equals(snippet.Name, StringComparison.OrdinalIgnoreCase));
 
+            if (fileToUpdate == null)
+            {
+                CreateFile(snippet.Name, snippet.Content);
+                return;
+            }
+
             var contentStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(snippet.Content));
             var update = Service.Files.Update(fileToUpdate, fileToUpdate.Id, contentStream, FileMimeType);
             update.NewRevision = true;
@@ -158,6 +158,9 @@ namespace SnippetStore
         {
             var allFiles = GetAllNotTrashedFiles();
             var fileToRemove = allFiles.FirstOrDefault(file => file.Title.Equals(snippet.Name, StringComparison.OrdinalIgnoreCase));
+
+            if (fileToRemove == null)
+                return;
 
             Service.Files.Delete(fileToRemove.Id).Execute();
         }

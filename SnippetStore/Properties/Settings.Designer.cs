@@ -70,5 +70,17 @@ namespace SnippetStore.Properties {
                 this["Top"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ETags {
+            get {
+                return ((string)(this["ETags"]));
+            }
+            set {
+                this["ETags"] = value;
+            }
+        }
     }
 }

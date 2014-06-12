@@ -61,6 +61,8 @@ namespace SnippetStore
             SyncSnippetsCommand = new RelayCommand<Object>(SyncSnippetsCommandHandler);
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
+
+            //googleDrive.GetUpdateFilesFromGoogleDrive();
         }
 
         private void SyncSnippetsCommandHandler(object obj)

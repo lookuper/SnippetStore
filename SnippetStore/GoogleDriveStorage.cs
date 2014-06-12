@@ -134,6 +134,7 @@ namespace SnippetStore
 
             var contentStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
             var responce = Service.Files.Insert(fileToCreate, contentStream, FileMimeType).Upload();
+            UpdateETags();
         }
 
         public void Update(Snippet snippet)
@@ -152,6 +153,7 @@ namespace SnippetStore
             update.NewRevision = true;
 
             update.UploadAsync();
+            UpdateETags();
         }
 
         public void RemoveSnippet(Snippet snippet)
@@ -162,7 +164,10 @@ namespace SnippetStore
             if (fileToRemove == null)
                 return;
 
-            Service.Files.Delete(fileToRemove.Id).Execute();
+            Service.Files.Delete(fileToRemove.Id)
+                .ExecuteAsync();
+
+            UpdateETags();
         }
 
         public void UploadFiles(List<Snippet> fileList)
@@ -171,6 +176,61 @@ namespace SnippetStore
             {
                 CreateFile(file.Name, file.Content);
             }
+        }
+
+        private void UpdateETags()
+        {
+            SnippetStore.Properties.Settings.Default.ETags = String.Empty;
+            ETagsCheck();
+        }
+
+        private string ETagsCheck()
+        {
+            if (String.IsNullOrEmpty(SnippetStore.Properties.Settings.Default.ETags))
+            {
+                var allFiles = GetAllNotTrashedFiles();
+                StringBuilder toSerialization = new StringBuilder();
+
+                foreach (var file in allFiles)
+                {
+                    toSerialization.AppendFormat("{0}:{1},", file.Title, file.ETag);
+                }
+
+                SnippetStore.Properties.Settings.Default.ETags = toSerialization.ToString();
+            }
+
+            return SnippetStore.Properties.Settings.Default.ETags;
+        }
+
+        public List<GoogleFile> GetUpdateFilesFromGoogleDrive()
+        {
+            var originalFiles = ETagsCheck();
+            var allFiles = GetAllNotTrashedFiles();
+            var updatedFiles = new List<GoogleFile>();
+
+            foreach (var bucket in originalFiles.Split(','))
+            {
+                if (String.IsNullOrEmpty(bucket))
+                    continue;
+
+                var token = bucket.Split(':');
+                var name = token.ElementAtOrDefault(0);
+                var etag = token.ElementAtOrDefault(1);
+
+                var gFile = allFiles.FirstOrDefault(item => item.Title.Equals(name, StringComparison.OrdinalIgnoreCase)
+                    && !item.MimeType.Equals(FolderMimeType));
+
+                if (gFile != null)
+                {
+                    if (!gFile.ETag.Equals(etag, StringComparison.OrdinalIgnoreCase))
+                        updatedFiles.Add(gFile);
+                }
+            }
+
+            if (updatedFiles.Count != 0)
+                UpdateETags();
+
+            return updatedFiles;
         }
 
         public IList<Snippet> DownloadFiles(List<GoogleFile> files)

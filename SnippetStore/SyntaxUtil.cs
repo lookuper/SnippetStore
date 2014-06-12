@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using AurelienRibon.Ui.SyntaxHighlightBox;
 
 namespace SnippetStore
 {
-    public class SyntaxUtil
+    public static class SyntaxUtil
     {
         public static readonly DependencyProperty BindableSourceProperty =
             DependencyProperty.RegisterAttached("BindableSource",
@@ -36,6 +37,13 @@ namespace SnippetStore
                 return;
 
             box.CurrentHighlighter = highlighter;
+        }
+
+        public static void Async<T>(Func<T> g, Action action)
+        {
+            Task.Factory.StartNew<T>(g)
+                .ContinueWith(result => result)
+                .ContinueWith(_ => action.Invoke());
         }
     }
 

@@ -16,6 +16,8 @@ namespace SnippetStore
     {
         private readonly SnippetStoreModel model = new SnippetStoreModel();
         private MyTabItem selectedTab;
+        private String syncButtonTooltip = "No updates avaliable";
+        private bool isSyncActive;
         private IHighlighter highlighter;
         private GoogleDriveStorage googleDrive = new GoogleDriveStorage
             (
@@ -35,7 +37,16 @@ namespace SnippetStore
             get { return highlighter; }
             set { highlighter = value; OnPropertyChanged("Highlighter"); }
         }
-           
+        public string SyncButtonTooltip
+        {
+            get { return syncButtonTooltip; }
+            set { syncButtonTooltip = value; OnPropertyChanged("SyncButtonTooltip"); }
+        }
+        public bool IsSyncActive
+        {
+            get { return isSyncActive; }
+            set { isSyncActive = value; OnPropertyChanged("IsSyncActive"); }
+        }
 
         public ICommand TreeItemDoubleClickCommand { get; set; }
         public ICommand CloseTabCommand { get; set; }
@@ -62,6 +73,15 @@ namespace SnippetStore
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
 
+            // async call
+            var updateFiles = googleDrive.GetUpdateFilesFromGoogleDrive();
+            
+            if (updateFiles.Count > 0)
+            {
+                IsSyncActive = true;
+                SyncButtonTooltip = String.Format("{0} updates avaliable", updateFiles.Count);
+            }
+            //IsSyncActive = true;
             //googleDrive.GetUpdateFilesFromGoogleDrive();
         }
 

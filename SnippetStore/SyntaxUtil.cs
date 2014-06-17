@@ -45,6 +45,14 @@ namespace SnippetStore
                 .ContinueWith(result => result)
                 .ContinueWith(_ => action.Invoke());
         }
+
+        public static void Async<T>(Func<T> operation, Action<T> marshalToUI)
+        {
+            var dispatcher = Application.Current.Dispatcher;
+
+            Task.Factory.StartNew(operation)
+                .ContinueWith(result => dispatcher.BeginInvoke(marshalToUI, result.Result), TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
     }
 
 }

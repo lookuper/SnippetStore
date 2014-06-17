@@ -350,11 +350,12 @@
                 <Button>
                     <Image Source="Icons/Info.ico" ToolTip="May, 2014." Width="25" Height="25"/>
                 </Button>
+                <Button Command="{Binding SyncSnippetsCommand}">
+                    <Image Source="Icons/Sync.ico"
+                           Width="25" Height="25"/>                        
+                </Button>
                 <Button Command="{Binding SyncSnippetsCommand}" IsEnabled="{Binding IsSyncActive}"
                         Content="{Binding SyncButtonTooltip}" Margin="5,0,5,0">
-                    <!--<Image Source="Icons/Sync.ico" 
-                           ToolTip="{Binding SyncButtonTooltip}"
-                           Width="25" Height="25" Opacity="1"/>-->
                 </Button>
             </ToolBar>
         </ToolBarPanel>

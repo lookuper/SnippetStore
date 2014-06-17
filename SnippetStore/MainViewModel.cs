@@ -73,20 +73,28 @@ namespace SnippetStore
 
             Highlighter = HighlighterManager.Instance.Highlighters["CSharp"];
 
-            // async call
-            var updateFiles = googleDrive.GetUpdateFilesFromGoogleDrive();
-            
-            if (updateFiles.Count > 0)
-            {
-                IsSyncActive = true;
-                SyncButtonTooltip = String.Format("{0} updates avaliable", updateFiles.Count);
-            }
-            //IsSyncActive = true;
-            //googleDrive.GetUpdateFilesFromGoogleDrive();
+            SyntaxUtil.Async(
+                () => googleDrive.GetUpdateFilesFromGoogleDrive(),
+                result =>
+                {
+                    if (result.Count > 0)
+                    {
+                        //IsSyncActive = true;
+                        SyncButtonTooltip = String.Format("{0} update avaliable", result.Count);
+                    }
+                });
         }
 
         private void SyncSnippetsCommandHandler(object obj)
         {
+            SyntaxUtil.Async(
+                () => GetLatestFromGDrive(),
+                result => SyncButtonTooltip = result);
+        }
+
+        private String GetLatestFromGDrive()
+        {
+            int filesUpdated = 0;
             googleDrive.CreateInfustructure();
 
             var allSnippets = Snippets.ToList();
@@ -113,12 +121,34 @@ namespace SnippetStore
 
             googleDrive.UploadFiles(snippetsToUpload);
             var snippetsToStore = googleDrive.DownloadFiles(driveFileToDownload);
+            var dispatcher = Application.Current.Dispatcher;
 
             foreach (var snippet in snippetsToStore)
             {
                 model.Save(snippet);
-                Snippets.Add(snippet);
+                dispatcher.Invoke(new Action(() => Snippets.Add(snippet)));
+                //Snippets.Add(snippet); // for STA
+            }  
+
+            var updatesFromGoogleDrive = googleDrive.GetUpdateFilesFromGoogleDrive();
+
+            foreach (var gFileUpdate in updatesFromGoogleDrive)
+            {
+                var snippetToUpdate = Snippets.FirstOrDefault(snippet => snippet.Name.Equals(gFileUpdate.Title, StringComparison.OrdinalIgnoreCase));
+
+                if (snippetToUpdate != null)
+                    googleDrive.Update(snippetToUpdate);
             }
+
+            if (snippetsToUpload.Count == 0 &&
+                driveFileToDownload.Count == 0 &&
+                updatesFromGoogleDrive.Count == 0)
+                return SyncButtonTooltip;
+            else
+            return String.Format("Uploaded: {0}, Downloaded: {1}, Updated: {2}", 
+                                    snippetsToUpload.Count, 
+                                    driveFileToDownload.Count, 
+                                    updatesFromGoogleDrive.Count);
         }
 
         private void CloseAppCommandHandler(CancelEventArgs eArgs)
@@ -177,9 +207,7 @@ namespace SnippetStore
             model.Remove(snippet);
             Snippets.Remove(snippet);
 
-            // remove from google drive 
             googleDrive.RemoveSnippet(snippet);
-
             CloseTabCommandHandler(GetTabBySnippet(snippet));
         }
 

@@ -53,7 +53,7 @@ namespace SnippetStore
                     ClientSecret = this.ClientSecret,
                 };
 
-                UserCredentials = GoogleWebAuthorizationBroker.AuthorizeAsync(secrects, new[] { DriveService.Scope.Drive }, "user", CancellationToken.None).Result;
+                UserCredentials = GoogleWebAuthorizationBroker.AuthorizeAsync(secrects, new[] { DriveService.Scope.Drive }, "SnippetStoreUser", CancellationToken.None).Result;
 
                 return new DriveService(new BaseClientService.Initializer()
                 {

@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnippetStore", "SnippetStore\SnippetStore.csproj", "{141291A6-2640-4957-98A0-3DE368F75CC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release", "Release", "{4C3F424B-ADE9-4205-80CE-7038D633BAEE}"
 	ProjectSection(SolutionItems) = preProject
+		Release\SkySnippetStore v1.1.exe = Release\SkySnippetStore v1.1.exe
 		Release\SnippetStoreRelease.exe = Release\SnippetStoreRelease.exe
 	EndProjectSection
 EndProject

@@ -17,3 +17,11 @@ Keyboard shortcuts: Ctrl+N (new snippet), Ctrl+S (save current tab), Ctrl+W (clo
 
 Screenshot:
 ![Alt text](/SnippetStore/screenshots/SnippetStore.png "Main page")
+
+Version 1.1 (SkySnippet store) 
+
+Changes:
+  Add Google Drive sync ability between different instance of the app.
+
+Screenshot:
+![Alt text](/SnippetStore/screenshots/SnippetStore1.1.png "Main page")
